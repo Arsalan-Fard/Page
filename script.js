@@ -333,7 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const themeToggle = document.getElementById('theme-toggle');
+    const headerImage = document.getElementById('header-image');
     const body = document.body;
+
+    const updateHeaderImage = () => {
+        if (!headerImage) return;
+        const isDark = body.classList.contains('dark-mode');
+        // Simple fade effect could be added here by toggling a class
+        headerImage.src = isDark ? 'styles/2.png' : 'styles/1.png';
+    };
 
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -341,10 +349,52 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
         body.classList.add('dark-mode');
     }
+    
+    // Set initial image state
+    updateHeaderImage();
 
-    themeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-        localStorage.setItem('theme', currentTheme);
-    });
+    const toggleTheme = () => {
+        if (window.PowerGlitch) {
+            PowerGlitch.glitch('.container', {
+                playMode: 'always',
+                createContainers: false,
+                hideOverflow: false,
+                timing: {
+                    duration: 400,
+                    iterations: 1
+                },
+                glitchTimeSpan: {
+                    start: 0,
+                    end: 1
+                },
+                shake: {
+                    velocity: 15,
+                    amplitudeX: 0.05,
+                    amplitudeY: 0.05
+                },
+                slice: {
+                    count: 15,
+                    velocity: 20,
+                    minHeight: 0.02,
+                    maxHeight: 0.15,
+                    hueRotate: true,
+                },
+            });
+        }
+
+        setTimeout(() => {
+            body.classList.toggle('dark-mode');
+            const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+            updateHeaderImage();
+        }, 200);
+    };
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+    
+    if (headerImage) {
+        headerImage.addEventListener('click', toggleTheme);
+    }
 });

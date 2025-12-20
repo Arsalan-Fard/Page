@@ -12,7 +12,7 @@
 }
 
 body.dark-mode {
-    --bg-color: #121212;
+    --bg-color: rgb(1, 11, 17);
     --text-color: #e0e0e0;
     --text-secondary: #aaa;
     --border-color: #333;
@@ -31,13 +31,14 @@ body.dark-mode {
 }
 
 body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.5;
     padding: 40px;
     transition: background-color 0.3s, color 0.3s;
     counter-reset: figure-counter; /* Initialize figure counter */
+    overflow-x: hidden;
 }
 
 a {
@@ -56,15 +57,70 @@ a:hover {
 }
 
 header {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 40px;
     padding-bottom: 40px;
     border-bottom: 1px solid var(--border-color);
     position: relative;
 }
 
+.header-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    align-items: center;
+    padding-right: 120px;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-right img {
+    width: 180%;
+    max-width: none;
+    height: auto;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+body.dark-mode .header-right img {
+    mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 70%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 70%);
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column-reverse;
+        justify-content: center;
+        text-align: center;
+        padding-top: 60px; /* Space for theme toggle */
+    }
+
+    .header-left, .header-right {
+        flex: none;
+        width: 100%;
+    }
+    
+    .header-right {
+        margin-bottom: 20px;
+    }
+}
+
 .theme-toggle {
     position: absolute;
-    top: -10px;
+    top: 20px;
     right: 0;
     background: none;
     border: none;
@@ -84,14 +140,43 @@ header {
 body.dark-mode .moon-icon { display: none; }
 body.dark-mode .sun-icon { display: block; }
 
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 h1.name {
-    font-size: 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.8rem;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 16px;
+    line-height: 1.1;
+    
+    
+    /* Gradient Text Effect */
+    background: linear-gradient(90deg, #344173, #F4B0B2, #FBA159);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 6s ease infinite;
+}
+
+body.dark-mode h1.name {
+    background: linear-gradient(90deg,  #33ffc5, #33ccff, #3366ff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 6s ease infinite;
 }
 
 p.bio {
-    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.125rem;
     color: var(--text-secondary);
     max-width: 600px;
     margin-bottom: 24px;
