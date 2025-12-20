@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human-Computer Interaction for Mixed Reality</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
 
@@ -19,7 +19,6 @@
             <p class="bio">
                 Soheil Lotfi, Arsalan Masoudifard
             </p>
-            <!-- <a href="#" class="more-info">More Info</a> -->
         </header>
 
         <nav class="filter-nav">
@@ -32,10 +31,11 @@
         <main class="project-grid" id="gallery">
             
             <article class="project-card" data-category="Labs" data-id="lab-1">
-                <div class="image-container">
+                <figure class="image-container">
                     <img src="images/blog_image.jpg" alt="blog setup">
+                    <figcaption>blog setup</figcaption>
                     <!-- <div class="badge">RUNNER UP<br>CORE77 AWARDS</div> -->
-                </div>
+                </figure>
                 <div class="project-info">
                     <h3 class="project-title">
                         <strong>Lab 1:</strong> Blog Setup
@@ -49,9 +49,10 @@
             </article>
 
             <article class="project-card" data-category="Labs" data-id="lab-2">
-                <div class="image-container">
+                <figure class="image-container">
                     <img src="images/unity_setup_image.jpg" alt="unity setup">
-                </div>
+                    <figcaption>unity setup</figcaption>
+                </figure>
                 <div class="project-info">
                     <h3 class="project-title">
                         <strong>Lab 2:</strong> Unity Setup
@@ -65,9 +66,10 @@
             </article>
 
             <article class="project-card" data-category="Lectures" data-id="lecture-1">
-                <div class="image-container">
+                <figure class="image-container">
                     <img src="images/VR_fail_image.jpg" alt="VR Fails">
-                </div>
+                    <figcaption>VR Fails</figcaption>
+                </figure>
                 <div class="project-info">
                     <h3 class="project-title">
                         <strong>Lecture 1:</strong> VR Fails
@@ -81,9 +83,10 @@
             </article>
 
             <article class="project-card" data-category="Project" data-id="project-1">
-                <div class="image-container">
+                <figure class="image-container">
                     <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=1000&auto=format&fit=crop" alt="Widget Interface">
-                </div>
+                    <figcaption>Widget Interface</figcaption>
+                </figure>
                 <div class="project-info">
                     <h3 class="project-title">
                         <strong>Final Project:</strong> Locomotion
@@ -101,7 +104,9 @@
         <div id="project-detail" class="hidden">
             <button id="back-btn" onclick="showGallery()">Back to Projects</button>
             <h2 id="detail-title"></h2>
-            <img id="detail-image" src="" alt="">
+            <figure>
+                <img id="detail-image" src="" alt="">
+            </figure>
             <div id="detail-content"></div>
         </div>
     </div>
