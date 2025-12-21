@@ -68,6 +68,7 @@ export function initScene(setCameraTarget) {
         const isIntersectionFrame = index <= 2;
 
         frame.innerHTML = `
+                ${index === 0 ? `<div id="intersection-hint-3d"><span id="typed-text-3d"></span></div>` : ''}
                 <div class="frame-inner">
                     <h2 class="frame-title">${post.title}</h2>
                     <div class="frame-meta">${post.meta}</div>

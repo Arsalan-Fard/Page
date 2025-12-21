@@ -1,18 +1,17 @@
-#intersection-hint {
-    position: fixed;
-    top: 20%;
+#intersection-hint-3d {
+    position: absolute;
+    top: -60px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 3;
+    width: 100%;
     font-family: "Orbitron", "Trebuchet MS", sans-serif;
-    font-size: clamp(0.9rem, 1.8vw, 1.2rem);
-    letter-spacing: 0.12em;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
     color: var(--glow);
-    text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
     opacity: 0;
     pointer-events: none;
     text-align: center;
-    max-width: 90vw;
     transition: opacity 0.5s ease;
 
     &.visible {
@@ -20,12 +19,12 @@
     }
 }
 
-#typed-text::after {
+#typed-text-3d::after {
     content: '|';
     animation: blink 1s infinite;
 }
 
-#typed-text.typing-complete::after {
+#typed-text-3d.typing-complete::after {
     content: '';
 }
 

@@ -18,8 +18,6 @@ const scene = document.getElementById("scene");
 const hero = document.getElementById("hero");
 const scrollHint = document.getElementById("scroll-hint");
 const introDim = document.getElementById("intro-dim");
-const intersectionHint = document.getElementById("intersection-hint");
-const typedText = document.getElementById("typed-text");
 const minimap = document.getElementById("minimap");
 const ctx = minimap ? minimap.getContext("2d") : null;
 const cursorDot = document.getElementById("cursor-dot");
@@ -142,6 +140,9 @@ function startIntro() {
 }
 
 export function initCamera(mapPoints, mapBounds) {
+    const intersectionHint = document.getElementById("intersection-hint-3d");
+    const typedText = document.getElementById("typed-text-3d");
+
     // Scroll Track sizing
     const scrollTrack = document.getElementById("scroll-track");
     scrollTrack.style.height = `${Math.max(520, posts.length * 140)}vh`;
