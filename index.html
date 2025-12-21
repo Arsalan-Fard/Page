@@ -168,7 +168,7 @@
         }
 
         .post-frame.intersection-frame {
-            width: min(70vw, 450px);
+            width: min(75vw, 450px);
         }
 
         .post-frame::before,
@@ -540,14 +540,14 @@
             } else if (index === 1) {
                 // Lab Assignments frame - to the right and rotated
                 z = 200;
-                x = 600; // To the right of center
+                x = 450; // To the right of center
                 y = 0;
                 rotateY = -45; // Rotate 45 degrees to face the camera when rotated right
                 frame.classList.add("lab-assignments", "intersection-frame");
             } else if (index === 2) {
                 // Lecture Assignments frame - to the left and rotated
                 z = 200;
-                x = -600; // To the left of center
+                x = -450; // To the left of center
                 y = 0;
                 rotateY = 45; // Rotate 45 degrees to face the camera when rotated left
                 frame.classList.add("lecture-assignments", "intersection-frame");
@@ -587,16 +587,19 @@
             if (post.isProjects) {
                 frame.addEventListener("click", () => {
                     targetRotationY = 0; // Rotate back to center
+                    targetTranslateX = 0; // Move back to center
                 });
                 frame.style.pointerEvents = "auto";
             } else if (post.isLabAssignments) {
                 frame.addEventListener("click", () => {
                     targetRotationY = 45; // Rotate 45 degrees to the right
+                    targetTranslateX = 350; // Move camera to the right (adjust this value)
                 });
                 frame.style.pointerEvents = "auto";
             } else if (post.isLectureAssignments) {
                 frame.addEventListener("click", () => {
                     targetRotationY = -45; // Rotate 45 degrees to the left
+                    targetTranslateX = -350; // Move camera to the left (adjust this value)
                 });
                 frame.style.pointerEvents = "auto";
             }
@@ -622,6 +625,8 @@
         let tiltY = 0;
         let targetRotationY = 0;
         let currentRotationY = 0;
+        let targetTranslateX = 0;
+        let currentTranslateX = 0;
 
         function clamp(value, min, max) {
             return Math.min(Math.max(value, min), max);
@@ -655,7 +660,8 @@
         function animate() {
             currentZ += (targetZ - currentZ) * 0.08;
             currentRotationY += (targetRotationY - currentRotationY) * 0.08;
-            scene.style.transform = `translateZ(${currentZ}px) rotateX(${tiltX}deg) rotateY(${tiltY + currentRotationY}deg)`;
+            currentTranslateX += (targetTranslateX - currentTranslateX) * 0.08;
+            scene.style.transform = `translate3d(${-currentTranslateX}px, 0, ${currentZ}px) rotateX(${tiltX}deg) rotateY(${tiltY + currentRotationY}deg)`;
             updateFrameVisibility(currentZ);
             const introProgress = clamp((currentZ + introDepth) / introDepth, 0, 1);
             const heroOpacity = clamp(1 - introProgress * 2, 0, 1);
