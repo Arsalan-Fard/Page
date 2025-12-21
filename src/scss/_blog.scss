@@ -1,0 +1,113 @@
+#blog-view {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-0);
+    z-index: 50;
+    overflow-y: auto;
+    padding: 80px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    opacity: 1;
+    transform: translateY(0);
+
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+    }
+
+    /* Scrollbar for blog view */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--bg-1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--frame-border);
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--glow);
+        }
+    }
+}
+
+.blog-content {
+    max-width: 800px;
+    width: 100%;
+    background: rgba(10, 17, 24, 0.6);
+    padding: 40px;
+    border: 1px solid var(--frame-border);
+    border-radius: 4px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+#back-button {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    background: transparent;
+    border: 1px solid var(--glow);
+    color: var(--glow);
+    padding: 10px 20px;
+    font-family: "Orbitron", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    z-index: 51;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+
+    &:hover {
+        background: var(--glow-soft);
+        box-shadow: 0 0 15px var(--glow);
+    }
+}
+
+#blog-title {
+    font-family: "Orbitron", sans-serif;
+    font-size: 2.5rem;
+    color: var(--glow);
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px var(--glow-soft);
+}
+
+.blog-meta {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.blog-featured-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    border: 1px solid var(--frame-border);
+    display: block;
+
+    &[src=""] {
+        display: none;
+    }
+}
+
+#blog-body {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text);
+
+    p {
+        margin-bottom: 20px;
+    }
+}
