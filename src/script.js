@@ -635,7 +635,40 @@ const blogImage = document.getElementById('blog-image');
 const blogBody = document.getElementById('blog-body');
 const viewport = document.getElementById('viewport');
 
+function triggerGlitch() {
+    if (typeof PowerGlitch !== 'undefined') {
+        const { startGlitch, stopGlitch } = PowerGlitch.glitch(document.body, {
+            playMode: 'manual',
+            createContainers: false, // Don't create containers if not needed, but usually required for effect
+            hideOverflow: true,
+            timing: {
+                duration: 500,
+                iterations: 1
+            },
+            glitchTimeDivisor: 1,
+            shake: {
+                velocity: 20,
+                amplitude: 0.1,
+            },
+            slice: {
+                count: 15,
+                velocity: 20,
+                minHeight: 0.02,
+                maxHeight: 0.15,
+                hueRotate: true,
+            },
+            pulse: false
+        });
+
+        startGlitch();
+        setTimeout(stopGlitch, 600);
+    }
+}
+
 function handleHashChange() {
+    // Trigger glitch effect on every navigation
+    triggerGlitch();
+
     const hash = window.location.hash.substring(1); // Remove #
     const post = posts.find(p => p.slug === hash);
 
