@@ -42,11 +42,11 @@
           radial-gradient(circle at 60% 80%, rgba(0, 140, 255, 0.12), transparent 45%),
           linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 40%, var(--bg-2) 100%);
       overflow-x: hidden;
-  }
 
-  body.intro-preload,
-  body.intro-running {
-      overflow: hidden;
+      &.intro-preload,
+      &.intro-running {
+          overflow: hidden;
+      }
   }
 
   body.intro-preload #hero,

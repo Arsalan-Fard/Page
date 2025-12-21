@@ -1,0 +1,26 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "- [ ] Color for signs - [ ] Glitch for entering - [ ] nav bar (scroll bar) - [ ]",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arsalan-Fard/Page.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arsalan-Fard/Page/issues"
+  },
+  "homepage": "https://github.com/Arsalan-Fard/Page#readme",
+  "devDependencies": {
+    "sass": "^1.97.1",
+    "vite": "^7.3.0"
+  }
+}
