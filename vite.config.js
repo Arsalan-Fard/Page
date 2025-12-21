@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/Page/', // Matches your GitHub repo name
+  base: '/Soheil-Arsalan_MR/', // Matches your GitHub repo name
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
