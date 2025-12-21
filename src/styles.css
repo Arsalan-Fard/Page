@@ -1,4 +1,4 @@
-  :root {
+:root {
       color-scheme: dark;
       --bg-0: #05080b;
       --bg-1: #0a1118;
@@ -84,7 +84,7 @@
   #scroll-hint {
       position: fixed;
       left: 50%;
-      bottom: 28px;
+      bottom: 24px;
       transform: translateX(-50%);
       z-index: 3;
       text-transform: uppercase;
@@ -285,6 +285,21 @@
       color: var(--glow);
       text-transform: uppercase;
       letter-spacing: 0.08em;
+  }
+
+  /* Projects/Main Track Styles */
+  .post-frame.project-assignments .frame-inner {
+      border-color: var(--glow);
+  }
+
+  .post-frame.project-assignments .frame-title,
+  .post-frame.project-assignments .frame-index {
+      color: var(--glow);
+  }
+
+  .post-frame.project-assignments .frame-tag {
+      color: var(--glow);
+      border-color: rgba(0, 240, 255, 0.35);
   }
 
   .post-frame.lab-assignments .frame-inner {

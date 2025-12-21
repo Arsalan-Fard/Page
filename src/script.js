@@ -31,25 +31,29 @@ const posts = [
         title: "Entry 02: Latency Mirage",
         meta: "Lecture Notes / 2025.02",
         body: "Delayed perception folds into itself. The room repeats, but the data stays coherent.",
-        tags: ["latency", "perception", "notes"]
+        tags: ["latency", "perception", "notes"],
+        isLectureRoute: true
     },
     {
         title: "Entry 03: Holo Console",
         meta: "Prototype / 2025.03",
         body: "A floating console surfaces in the noise. Controls stay sharp while the background jitters.",
-        tags: ["ui", "prototype", "vr"]
+        tags: ["ui", "prototype", "vr"],
+        isProjectRoute: true
     },
     {
         title: "Entry 04: Signal Ritual",
         meta: "Project Log / 2025.04",
         body: "Gesture-based inputs become ritual. Each frame locks in before dissolving into static.",
-        tags: ["gesture", "ritual", "log"]
+        tags: ["gesture", "ritual", "log"],
+        isProjectRoute: true
     },
     {
         title: "Entry 05: Archive Echo",
         meta: "Field Study / 2025.05",
         body: "Posts echo behind you as glowing traces. The matrix retains every sequence.",
-        tags: ["archive", "echo", "field"]
+        tags: ["archive", "echo", "field"],
+        isProjectRoute: true
     }
 ];
 
@@ -76,6 +80,10 @@ scrollTrack.style.height = `${Math.max(520, posts.length * 140)}vh`;
 const mapPoints = [];
 let mapBounds = { minX: 0, maxX: 0, minZ: -totalDepth, maxZ: introDepth };
 
+let labCount = 0;
+let lectureCount = 0;
+let projectCount = 0;
+
 posts.forEach((post, index) => {
     const frame = document.createElement("article");
     frame.className = "post-frame";
@@ -90,7 +98,7 @@ posts.forEach((post, index) => {
         z = 0;
         x = 0;
         y = 0;
-        frame.classList.add("intersection-frame");
+        frame.classList.add("intersection-frame", "project-assignments");
         mapZ = 0;
     } else if (index === 1) {
         // Lab Assignments frame
@@ -110,19 +118,32 @@ posts.forEach((post, index) => {
         frame.classList.add("lecture-assignments", "intersection-frame");
         // Map to center
         mapX = 0; mapZ = 0;
-    } else if (index === 3) {
-        // Lab 01 - Branch
-        z = -spacing * Math.cos(Math.PI / 4);
-        x = 600 + spacing * Math.sin(Math.PI / 4);
+    } else if (post.isLabRoute) {
+        // Lab Branch
+        labCount++;
+        z = -labCount * spacing * Math.cos(Math.PI / 4);
+        x = 600 + labCount * spacing * Math.sin(Math.PI / 4);
         y = 0;
         rotateY = -45;
         frame.classList.add("lab-assignments");
         // Keep actual position for map
         mapX = x;
         mapZ = z;
+    } else if (post.isLectureRoute) {
+        // Lecture Branch
+        lectureCount++;
+        z = -lectureCount * spacing * Math.cos(Math.PI / 4);
+        x = -600 - lectureCount * spacing * Math.sin(Math.PI / 4);
+        y = 0;
+        rotateY = 45;
+        frame.classList.add("lecture-assignments");
+        // Keep actual position for map
+        mapX = x;
+        mapZ = z;
     } else {
         // Main Track
-        z = -(index - 3) * spacing;
+        projectCount++;
+        z = -projectCount * spacing;
         x = (Math.random() * 2 - 1) * scatterX;
         y = (Math.random() * 2 - 1) * scatterY;
         // Force align to center line on map
@@ -253,6 +274,16 @@ function drawMinimap() {
         ctx.stroke();
     }
 
+    // Lecture Branch Line
+    const lectureFrame = mapPoints.find(p => p.originalIndex === 4);
+    if (lectureFrame) {
+        ctx.beginPath();
+        ctx.moveTo(getMapX(0), getMapY(0)); // Intersection point
+        ctx.lineTo(getMapX(lectureFrame.x), getMapY(lectureFrame.z));
+        ctx.strokeStyle = 'rgba(147, 112, 219, 0.4)';
+        ctx.stroke();
+    }
+
     // Draw Points
     mapPoints.forEach((p, i) => {
         if ((p.originalIndex === 1 || p.originalIndex === 2)) return;
@@ -262,7 +293,13 @@ function drawMinimap() {
 
         ctx.beginPath();
         ctx.arc(mx, my, p.type === 'node' ? 3 : 5, 0, Math.PI * 2);
-        ctx.fillStyle = p.originalIndex === 3 ? '#ff4f7b' : (p.type === 'node' ? '#00f0ff' : 'rgba(143, 176, 196, 0.5)');
+
+        let color = 'rgba(143, 176, 196, 0.5)';
+        if (p.type === 'node') color = '#00f0ff';
+        if (p.originalIndex === 3) color = '#ff4f7b';
+        if (p.originalIndex === 4) color = '#9370db';
+
+        ctx.fillStyle = color;
         ctx.fill();
     });
 
