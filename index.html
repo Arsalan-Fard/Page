@@ -101,6 +101,42 @@
             color: var(--glow);
         }
 
+        #intersection-hint {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            font-family: "Orbitron", "Trebuchet MS", sans-serif;
+            font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+            letter-spacing: 0.12em;
+            color: var(--glow);
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+            opacity: 0;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90vw;
+            transition: opacity 0.5s ease;
+        }
+
+        #intersection-hint.visible {
+            opacity: 1;
+        }
+
+        #typed-text::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        #typed-text.typing-complete::after {
+            content: '';
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
         #intro-dim {
             position: fixed;
             inset: 0;
@@ -447,6 +483,10 @@
         </div>
     </div>
 
+    <div id="intersection-hint">
+        <span id="typed-text"></span>
+    </div>
+
     <div id="scanlines"></div>
     <div id="noise"></div>
     <div id="chromatic"></div>
@@ -520,6 +560,8 @@
         const hero = document.getElementById("hero");
         const scrollHint = document.getElementById("scroll-hint");
         const introDim = document.getElementById("intro-dim");
+        const intersectionHint = document.getElementById("intersection-hint");
+        const typedText = document.getElementById("typed-text");
 
         const totalDepth = (posts.length - 1) * spacing + 2800;
         const introDepth = 5400;
@@ -627,9 +669,33 @@
         let currentRotationY = 0;
         let targetTranslateX = 0;
         let currentTranslateX = 0;
+        let hasReachedIntersection = false;
+        let isTyping = false;
 
         function clamp(value, min, max) {
             return Math.min(Math.max(value, min), max);
+        }
+
+        // Typewriter effect function
+        function typeWriter(text, element, speed = 50) {
+            if (isTyping) return;
+            isTyping = true;
+            let i = 0;
+            element.textContent = '';
+
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    element.classList.add('typing-complete');
+                    setTimeout(() => {
+                        intersectionHint.classList.remove('visible');
+                    }, 4000); // Hide after 4 seconds
+                }
+            }
+            type();
         }
 
         function updateFrameVisibility(depth) {
@@ -663,6 +729,14 @@
             currentTranslateX += (targetTranslateX - currentTranslateX) * 0.08;
             scene.style.transform = `translate3d(${-currentTranslateX}px, 0, ${currentZ}px) rotateX(${tiltX}deg) rotateY(${tiltY + currentRotationY}deg)`;
             updateFrameVisibility(currentZ);
+
+            // Detect intersection arrival (when currentZ is close to 0, meaning we've reached the frames)
+            if (!hasReachedIntersection && currentZ >= -500 && currentZ <= 500) {
+                hasReachedIntersection = true;
+                intersectionHint.classList.add('visible');
+                typeWriter('> SELECT TRACK _ Navigate your pathway through the matrix', typedText, 60);
+            }
+
             const introProgress = clamp((currentZ + introDepth) / introDepth, 0, 1);
             const heroOpacity = clamp(1 - introProgress * 2, 0, 1);
             if (hero) {
