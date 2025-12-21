@@ -287,10 +287,14 @@ function drawMinimap() {
     // Lab Branch Line
     const labPoints = mapPoints.filter(p => posts[p.originalIndex].isLabRoute);
     if (labPoints.length > 0) {
-        const lastLabPoint = labPoints.reduce((prev, curr) => (curr.z < prev.z ? curr : prev));
+        // Sort points by Z (highest Z is closest to start) to ensure sequential drawing
+        labPoints.sort((a, b) => b.z - a.z);
+
         ctx.beginPath();
-        ctx.moveTo(getMapX(0), getMapY(0)); // Intersection point
-        ctx.lineTo(getMapX(lastLabPoint.x), getMapY(lastLabPoint.z));
+        ctx.moveTo(getMapX(0), getMapY(0)); // Start at Intersection
+        labPoints.forEach(p => {
+            ctx.lineTo(getMapX(p.x), getMapY(p.z)); // Draw to next node
+        });
         ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
         ctx.stroke();
     }
@@ -298,10 +302,14 @@ function drawMinimap() {
     // Tutorial Branch Line
     const tutorialPoints = mapPoints.filter(p => posts[p.originalIndex].isTutorialRoute);
     if (tutorialPoints.length > 0) {
-        const lastTutorialPoint = tutorialPoints.reduce((prev, curr) => (curr.z < prev.z ? curr : prev));
+        // Sort points by Z (highest Z is closest to start)
+        tutorialPoints.sort((a, b) => b.z - a.z);
+
         ctx.beginPath();
-        ctx.moveTo(getMapX(0), getMapY(0)); // Intersection point
-        ctx.lineTo(getMapX(lastTutorialPoint.x), getMapY(lastTutorialPoint.z));
+        ctx.moveTo(getMapX(0), getMapY(0)); // Start at Intersection
+        tutorialPoints.forEach(p => {
+            ctx.lineTo(getMapX(p.x), getMapY(p.z)); // Draw to next node
+        });
         ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
         ctx.stroke();
     }
