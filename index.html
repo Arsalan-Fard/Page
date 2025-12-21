@@ -493,6 +493,22 @@
     <div id="vignette"></div>
     <div id="intro-dim"></div>
     <div id="scroll-track"></div>
+    
+    <canvas id="minimap"></canvas>
+
+    <style>
+        #minimap {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 150px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
 
     <script>
         const posts = [
@@ -562,10 +578,16 @@
         const introDim = document.getElementById("intro-dim");
         const intersectionHint = document.getElementById("intersection-hint");
         const typedText = document.getElementById("typed-text");
+        const minimap = document.getElementById("minimap");
+        const ctx = minimap.getContext("2d");
 
         const totalDepth = (posts.length - 1) * spacing + 2800;
         const introDepth = 5400;
         scrollTrack.style.height = `${Math.max(520, posts.length * 140)}vh`;
+
+        // Store world positions for the minimap
+        const mapPoints = [];
+        let mapBounds = { minX: 0, maxX: 0, minZ: -totalDepth, maxZ: introDepth };
 
         posts.forEach((post, index) => {
             const frame = document.createElement("article");
@@ -573,39 +595,64 @@
 
             // Position intersection frames and routes
             let z, x, y, rotateY = 0;
+            let mapX = 0; // Default map X
+            let mapZ = 0; // Default map Z
+
             if (index === 0) {
                 // Projects frame - CENTER of screen
                 z = 0;
-                x = 0; // Centered
+                x = 0; 
                 y = 0;
                 frame.classList.add("intersection-frame");
+                mapZ = 0;
             } else if (index === 1) {
-                // Lab Assignments frame - to the right and rotated
+                // Lab Assignments frame
                 z = 200;
-                x = 450; // To the right of center
+                x = 450; 
                 y = 0;
-                rotateY = -45; // Rotate 45 degrees to face the camera when rotated right
+                rotateY = -45; 
                 frame.classList.add("lab-assignments", "intersection-frame");
+                // Map to center (overlap with index 0 for "one dot" effect)
+                mapX = 0; mapZ = 0;
             } else if (index === 2) {
-                // Lecture Assignments frame - to the left and rotated
+                // Lecture Assignments frame
                 z = 200;
-                x = -450; // To the left of center
+                x = -450; 
                 y = 0;
-                rotateY = 45; // Rotate 45 degrees to face the camera when rotated left
+                rotateY = 45; 
                 frame.classList.add("lecture-assignments", "intersection-frame");
+                // Map to center
+                mapX = 0; mapZ = 0;
             } else if (index === 3) {
-                // Lab 01 - first frame in the red route (45 degree path to the right)
+                // Lab 01 - Branch
                 z = -spacing * Math.cos(Math.PI / 4);
-                x = 600 + spacing * Math.sin(Math.PI / 4); // Continue from Lab Assignments position
+                x = 600 + spacing * Math.sin(Math.PI / 4); 
                 y = 0;
                 rotateY = -45;
                 frame.classList.add("lab-assignments");
+                // Keep actual position for map
+                mapX = x;
+                mapZ = z;
             } else {
-                // Other frames continue as before, but start from index 4
+                // Main Track
                 z = -(index - 3) * spacing;
                 x = (Math.random() * 2 - 1) * scatterX;
                 y = (Math.random() * 2 - 1) * scatterY;
+                // Force align to center line on map
+                mapX = 0;
+                mapZ = z;
             }
+
+            // Only add unique points or simplified representation
+            // For indices 0, 1, 2, they map to (0,0). We can just add one of them or all (they overlap).
+            // Let's add all to track them, but visually they are one.
+            mapPoints.push({ x: mapX, z: mapZ, type: (index <= 2) ? 'node' : 'post', originalIndex: index });
+            
+            // Update bounds for map (using symmetric X to keep 0 centered)
+            const absX = Math.abs(mapX);
+            mapBounds.maxX = Math.max(mapBounds.maxX, absX);
+            // minZ is already tracked via loop logic mostly, but let's ensure
+            mapBounds.minZ = Math.min(mapBounds.minZ, mapZ);
 
             frame.style.setProperty("--x", `${x}px`);
             frame.style.setProperty("--y", `${y}px`);
@@ -649,6 +696,117 @@
             postsEl.appendChild(frame);
         });
 
+        // Setup Minimap
+        minimap.width = 400; // Double resolution for crispness
+        minimap.height = 300;
+        
+        function drawMinimap() {
+            ctx.clearRect(0, 0, minimap.width, minimap.height);
+            
+            const padding = 40;
+            const availableWidth = minimap.width - padding * 2;
+            const availableHeight = minimap.height - padding * 2;
+            
+            // Calculate ranges
+            // Z Range: roughly 15000 units (5400 start to -9200 end)
+            // X Range: roughly 4500 units (+/- 2226)
+            const rangeZ = mapBounds.maxZ - mapBounds.minZ;
+            const rangeX = Math.max(mapBounds.maxX * 2, 2000); // Ensure minimal width
+            
+            // Calculate Scale Factors for each dimension
+            const scaleZ = availableHeight / rangeZ;
+            const scaleX = availableWidth / rangeX;
+            
+            // UNIFIED SCALE: Use the smaller scale to fit both dimensions within the box
+            // This preserves the aspect ratio (angles).
+            // Since the world is very long (Z) and narrow (X), scaleZ will likely be the limiting factor.
+            const scale = Math.min(scaleZ, scaleX);
+            
+            function getMapY(worldZ) {
+                // Map worldZ to canvas Y
+                // maxZ (Start) -> Bottom
+                // minZ (End) -> Top
+                // Formula: BottomY - (distance_from_start * scale)
+                const distanceFromStart = mapBounds.maxZ - worldZ;
+                return (minimap.height - padding) - (distanceFromStart * scale);
+            }
+
+            function getMapX(worldX) {
+                // Map worldX to canvas X
+                // 0 -> Center
+                const center = minimap.width / 2;
+                return center + (worldX * scale);
+            }
+            
+            // Draw Connection Lines
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+            ctx.lineWidth = 1;
+            
+            // Main Track (Index 0 -> End)
+            // Just draw a line from (0, maxZ) to (0, minZ)
+            ctx.moveTo(getMapX(0), getMapY(mapBounds.maxZ)); // Start
+            ctx.lineTo(getMapX(0), getMapY(mapBounds.minZ)); // End
+            ctx.stroke();
+
+            // Lab Branch Line
+            // From (0,0) (Intersection) to Frame 3 Position
+            const labFrame = mapPoints.find(p => p.originalIndex === 3);
+            if (labFrame) {
+                ctx.beginPath();
+                ctx.moveTo(getMapX(0), getMapY(0)); // Intersection point
+                ctx.lineTo(getMapX(labFrame.x), getMapY(labFrame.z));
+                ctx.strokeStyle = 'rgba(255, 79, 123, 0.4)';
+                ctx.stroke();
+            }
+            
+            // Draw Points
+            mapPoints.forEach((p, i) => {
+                if ((p.originalIndex === 1 || p.originalIndex === 2)) return;
+
+                const mx = getMapX(p.x);
+                const my = getMapY(p.z);
+                
+                ctx.beginPath();
+                ctx.arc(mx, my, p.type === 'node' ? 3 : 2, 0, Math.PI * 2);
+                ctx.fillStyle = p.originalIndex === 3 ? '#ff4f7b' : (p.type === 'node' ? '#00f0ff' : 'rgba(143, 176, 196, 0.5)');
+                ctx.fill();
+            });
+
+            // Draw Player
+            // Player Z is -currentZ
+            const playerWorldZ = -currentZ;
+            const playerWorldX = currentTranslateX;
+
+            const px = getMapX(playerWorldX);
+            const py = getMapY(playerWorldZ);
+
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff4f7b';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#ff4f7b';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            // Start Point (Reference)
+            const sx = getMapX(0);
+            const sy = getMapY(introDepth);
+            ctx.beginPath();
+            ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fill();
+        }
+
+        console.log("--- Frame Layout Debug ---");
+        document.querySelectorAll('.post-frame').forEach((frame, index) => {
+            const x = frame.style.getPropertyValue('--x');
+            const y = frame.style.getPropertyValue('--y');
+            const z = frame.style.getPropertyValue('--z');
+            const type = frame.classList.contains('intersection-frame') ? 'Intersection' : 'Post';
+            console.log(`Frame ${index} (${type}): X=${x}, Y=${y}, Z=${z}`);
+        });
+
         for (let i = 0; i < 160; i += 1) {
             const voxel = document.createElement("span");
             voxel.className = "voxel";
@@ -671,6 +829,8 @@
         let currentTranslateX = 0;
         let hasReachedIntersection = false;
         let isTyping = false;
+
+        console.log(`Starting Camera Position: X=${currentTranslateX}, Y=0, Z=${currentZ}`);
 
         function clamp(value, min, max) {
             return Math.min(Math.max(value, min), max);
@@ -714,6 +874,7 @@
             const maxScroll = document.body.scrollHeight - window.innerHeight;
             scrollProgress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
             targetZ = scrollProgress * (totalDepth + introDepth) - introDepth;
+            console.log(`Current Position (Target): Z=${targetZ.toFixed(2)}, Scroll=${scrollProgress.toFixed(3)}`);
         }
 
         function onPointerMove(event) {
@@ -750,6 +911,7 @@
                 const dimOpacity = clamp(0.55 * (1 - introProgress), 0, 0.55);
                 introDim.style.opacity = dimOpacity.toFixed(2);
             }
+            drawMinimap();
             requestAnimationFrame(animate);
         }
 
