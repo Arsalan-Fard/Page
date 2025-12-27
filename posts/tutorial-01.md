@@ -42,6 +42,6 @@ We use **GitHub Pages** for hosting.
 
 *   **Process**: We use the `gh-pages` package. You can follow the instructions in image below to set it up.
 
-![Blog Setup 1](public/blog_setup/github.png)
+![Blog Setup 1](blog_setup/github.png)
 
 *   **Command**: Running "`npm run deploy`" builds the project (using Vite) into a `dist` folder and pushes that folder to a special branch on GitHub,.
