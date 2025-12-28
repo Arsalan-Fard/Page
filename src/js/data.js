@@ -52,7 +52,7 @@ export const posts = [
         title: "Tutorial 02: Unity Setup",
         meta: "2025.12.20",
         body: "This section provides you quick tips about how to setup Unity 6.",
-        tags: ["Unity 6"],
+        tags: ["Unity 6", "Microsoft Visual Studio"],
         isTutorialRoute: true,
         slug: "tutorial-02"
     },
