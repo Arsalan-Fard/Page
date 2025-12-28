@@ -69,6 +69,7 @@ export function initScene(setCameraTarget) {
 
         frame.innerHTML = `
                 ${index === 0 ? `<div id="intersection-hint-3d"><span id="typed-text-3d"></span></div>` : ''}
+                ${post.image ? `<img src="${post.image}" class="post-hover-image" alt="" />` : ''}
                 <div class="frame-inner">
                     <h2 class="frame-title">${post.title}</h2>
                     <div class="frame-meta">${post.meta}</div>
