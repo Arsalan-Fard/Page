@@ -28,7 +28,7 @@ export const posts = [
     },
     
     {
-        title: "Lab 01: The Ball",
+        title: "Lab 01: Roll a Ball",
         meta: "2025.12.25",
         body: "--",
         tags: ["--"],
@@ -99,5 +99,27 @@ export const spacing = 2300;
 export const scatterX = 220;
 export const scatterY = 140;
 
-export const totalDepth = (posts.length - 1) * spacing + 2800;
+const trackCounts = posts.reduce(
+    (counts, post, index) => {
+        if (index <= 2) return counts;
+        if (post.isLabRoute) {
+            counts.lab += 1;
+        } else if (post.isTutorialRoute) {
+            counts.tutorial += 1;
+        } else {
+            counts.project += 1;
+        }
+        return counts;
+    },
+    { lab: 0, tutorial: 0, project: 0 }
+);
+
+const diagonalSpacing = spacing * Math.cos(Math.PI / 4);
+const maxTrackDepth = Math.max(
+    trackCounts.project * spacing,
+    trackCounts.lab * diagonalSpacing,
+    trackCounts.tutorial * diagonalSpacing
+);
+
+export const totalDepth = maxTrackDepth;
 export const introDepth = 5400;

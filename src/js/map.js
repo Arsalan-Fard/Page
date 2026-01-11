@@ -11,7 +11,7 @@ export function drawMinimap(ctx, minimap, mapPoints, mapBounds, posts, currentZ,
 
     // Calculate ranges
     const rangeZ = mapBounds.maxZ - mapBounds.minZ;
-    const rangeX = Math.max(mapBounds.maxX * 2, 2000); // Ensure minimal width
+    const rangeX = Math.max(mapBounds.maxX * 2, 2000); 
 
     // Calculate Scale Factors for each dimension
     const scaleZ = availableHeight / rangeZ;
