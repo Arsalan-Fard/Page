@@ -67,7 +67,6 @@ export function initScene(setCameraTarget) {
 
         if (isIntersectionFrame) {
             frame.innerHTML = `
-                ${index === 0 ? `<div id="intersection-hint-3d"><span id="typed-text-3d"></span></div>` : ''}
                 <div class="frame-inner">
                     <h2 class="frame-title">${post.title}</h2>
                 </div>
@@ -104,6 +103,18 @@ export function initScene(setCameraTarget) {
             });
             frame.style.pointerEvents = "auto";
         }
+
+        frame.addEventListener("pointerenter", (e) => {
+            if (e.pointerType && e.pointerType !== "mouse") return;
+
+            if (post.isLabAssignments || post.isLabRoute) {
+                setCameraTarget(45, 350);
+            } else if (post.isTutorialAssignments || post.isTutorialRoute) {
+                setCameraTarget(-45, -350);
+            } else {
+                setCameraTarget(0, 0);
+            }
+        });
 
         postsEl.appendChild(frame);
     });

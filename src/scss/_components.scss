@@ -1,35 +1,5 @@
 @use 'variables' as *;
 
-#intersection-hint-3d {
-    position: absolute;
-    top: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    font-family: $font-display;
-    font-size: 1rem;
-    letter-spacing: 0.1em;
-    color: var(--glow);
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
-    opacity: 0;
-    pointer-events: none;
-    text-align: center;
-    transition: opacity 0.5s ease;
-
-    &.visible {
-        opacity: 1;
-    }
-}
-
-#typed-text-3d::after {
-    content: '|';
-    animation: blink 1s infinite;
-}
-
-#typed-text-3d.typing-complete::after {
-    content: '';
-}
-
 .voxel {
     position: absolute;
     width: 10px;

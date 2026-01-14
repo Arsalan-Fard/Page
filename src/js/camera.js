@@ -11,11 +11,12 @@ let targetRotationY = 0;
 let currentRotationY = 0;
 let targetTranslateX = 0;
 let currentTranslateX = 0;
-let hasReachedIntersection = false;
 
 const scene = document.getElementById("scene");
 const hero = document.getElementById("hero");
 const scrollHint = document.getElementById("scroll-hint");
+const scrollHintTyped = document.getElementById("scroll-hint-typed");
+const scrollHintForward = document.getElementById("scroll-hint-forward");
 const normalModeLink = document.getElementById("normal-mode-link");
 const introDim = document.getElementById("intro-dim");
 const cursorDot = document.getElementById("cursor-dot");
@@ -26,6 +27,18 @@ let isIntroActive = !prefersReducedMotion;
 let introRevealStart = 0;
 let introRevealDurationMs = 1100;
 let introLock = null;
+let hasTypedScrollHint = false;
+
+function startScrollHintTypewriter() {
+    if (hasTypedScrollHint) return;
+    if (!scrollHint || !scrollHintTyped || !scrollHintForward) return;
+
+    hasTypedScrollHint = true;
+    scrollHintForward.textContent = '';
+    typeWriter('Scroll to move ', scrollHintTyped, 120, () => {
+        typeWriter('forward', scrollHintForward, 120);
+    });
+}
 
 export function setCameraTarget(rotY, transX) {
     targetRotationY = rotY;
@@ -149,15 +162,14 @@ function startIntro() {
     introRevealStart = performance.now() + 180;
     body.classList.add('intro-revealing');
 
+    startScrollHintTypewriter();
+
     const skip = () => finishIntro(true);
     window.addEventListener('keydown', skip, { once: true });
     window.addEventListener('pointerdown', skip, { once: true });
 }
 
 export function initCamera() {
-    const intersectionHint = document.getElementById("intersection-hint-3d");
-    const typedText = document.getElementById("typed-text-3d");
-
     // Scroll Track sizing
     const scrollTrack = document.getElementById("scroll-track");
     scrollTrack.style.height = `${Math.max(520, posts.length * 140)}vh`;
@@ -212,12 +224,6 @@ export function initCamera() {
             return;
         }
 
-        if (!hasReachedIntersection && currentZ >= -500 && currentZ <= 500) {
-            hasReachedIntersection = true;
-            intersectionHint.classList.add('visible');
-            typeWriter('> CLICK ON A TRACK: Continue scrolling to see more.', typedText, 60);
-        }
-
         const introProgress = clamp((currentZ + introDepth) / introDepth, 0, 1);
         const heroOpacity = clamp(1 - introProgress * 2, 0, 1);
         if (hero) {
@@ -240,5 +246,6 @@ export function initCamera() {
 
     startIntro();
     onScroll();
+    if (!isIntroActive) startScrollHintTypewriter();
     animate();
 }

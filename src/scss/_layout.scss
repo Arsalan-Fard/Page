@@ -73,14 +73,14 @@ body.intro-revealing .hero-subtitle {
     opacity: 0.85;
     pointer-events: none;
 
-    span {
-        color: var(--glow);
-    }
-
     @media (max-width: 720px) {
         letter-spacing: 0.16em;
         font-size: 0.68rem;
     }
+}
+
+#scroll-hint-forward {
+    color: var(--glow);
 }
 
 #normal-mode-link {
