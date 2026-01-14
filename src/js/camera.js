@@ -17,6 +17,7 @@ let hasReachedIntersection = false;
 const scene = document.getElementById("scene");
 const hero = document.getElementById("hero");
 const scrollHint = document.getElementById("scroll-hint");
+const normalModeLink = document.getElementById("normal-mode-link");
 const introDim = document.getElementById("intro-dim");
 const minimap = document.getElementById("minimap");
 const ctx = minimap ? minimap.getContext("2d") : null;
@@ -136,6 +137,9 @@ function startIntro() {
     if (scrollHint) {
         scrollHint.style.opacity = '0';
     }
+    if (normalModeLink) {
+        normalModeLink.style.opacity = '0';
+    }
 
     introRevealStart = performance.now() + 180;
     body.classList.add('intro-revealing');
@@ -194,6 +198,9 @@ export function initCamera(mapPoints, mapBounds) {
             if (scrollHint) {
                 scrollHint.style.opacity = clamp(eased * 0.9, 0, 0.9).toFixed(2);
             }
+            if (normalModeLink) {
+                normalModeLink.style.opacity = clamp(eased * 0.9, 0, 0.9).toFixed(2);
+            }
             if (introDim) {
                 introDim.style.opacity = clamp(0.25 * (1 - eased), 0, 0.25).toFixed(2);
             }
@@ -221,6 +228,9 @@ export function initCamera(mapPoints, mapBounds) {
         }
         if (scrollHint) {
             scrollHint.style.opacity = clamp(heroOpacity * 0.9, 0, 0.9).toFixed(2);
+        }
+        if (normalModeLink) {
+            normalModeLink.style.opacity = clamp(heroOpacity * 0.9, 0, 0.9).toFixed(2);
         }
         if (introDim) {
             const dimOpacity = clamp(0.55 * (1 - introProgress), 0, 0.55);

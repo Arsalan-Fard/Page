@@ -83,6 +83,29 @@ body.intro-revealing .hero-subtitle {
     }
 }
 
+#normal-mode-link {
+    position: fixed;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    z-index: 101;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-size: 0.72rem;
+    color: var(--glow);
+    opacity: 0.85;
+    pointer-events: auto;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    @media (max-width: 720px) {
+        letter-spacing: 0.16em;
+        font-size: 0.68rem;
+    }
+}
+
 #intro-dim {
     position: fixed;
     inset: 0;
