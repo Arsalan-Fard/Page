@@ -18,7 +18,7 @@
     width: min(88vw, 640px);
     transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), var(--z)) rotateY(var(--rotateY, 0deg));
     transform-style: preserve-3d;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: all 0.3s ease;
     cursor: none;
     pointer-events: auto;
 
@@ -28,11 +28,7 @@
 
     &.intersection-label {
         width: auto;
-
-        &::before,
-        &::after {
-            display: none;
-        }
+        &::before, &::after { display: none; }
 
         .frame-inner {
             padding: 0;
@@ -72,14 +68,10 @@
             overflow: hidden;
         }
 
-        .frame-tags {
-            margin-top: auto;
-        }
+        .frame-tags { margin-top: auto; }
 
         @media (max-width: 720px) {
-            .frame-inner {
-                height: 320px;
-            }
+            .frame-inner { height: 320px; }
         }
     }
 
@@ -88,7 +80,7 @@
         content: "";
         position: absolute;
         inset: -8px;
-        border: 1px solid transparent;
+        border: 1px solid;
         pointer-events: none;
         animation: frame-glitch 6s steps(2, end) infinite;
     }
@@ -96,13 +88,11 @@
     &::before {
         border-color: rgba(0, 240, 255, 0.35);
         transform: translate3d(-2px, 0, 10px);
-        opacity: 0.7;
     }
 
     &::after {
         border-color: rgba(255, 79, 123, 0.3);
         transform: translate3d(2px, 0, 6px);
-        opacity: 0.5;
     }
 
     .frame-inner {
@@ -113,7 +103,6 @@
         backdrop-filter: blur(8px);
         box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
         overflow: hidden;
-        z-index: 0;
     }
 
     .frame-index {
@@ -163,21 +152,6 @@
         transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), calc(var(--z) + 20px)) rotateY(var(--rotateY, 0deg));
     }
 
-    @mixin frame-recolor($color, $shadow-color, $border-op-1, $border-op-2) {
-        .frame-inner { border-color: $color; }
-        &::before { border-color: $border-op-1; }
-        &::after { border-color: $border-op-2; }
-        .frame-index, .frame-title { 
-            color: $color; 
-            text-shadow: 0 0 12px $shadow-color; 
-        }
-        .frame-tag { 
-            border-color: $border-op-1; 
-            color: $color; 
-        }
-    }
-
-    /* Projects/Main Track Styles */
     &.project-assignments {
         .frame-inner { border-color: var(--glow); }
         .frame-title, .frame-index { color: var(--glow); }
@@ -185,11 +159,31 @@
     }
 
     &.lab-assignments {
-        @include frame-recolor(var(--accent), rgba(255, 79, 123, 0.45), rgba(255, 79, 123, 0.5), rgba(255, 79, 123, 0.35));
+        .frame-inner { border-color: var(--accent); }
+        &::before { border-color: rgba(255, 79, 123, 0.5); }
+        &::after { border-color: rgba(255, 79, 123, 0.35); }
+        .frame-index, .frame-title {
+            color: var(--accent);
+            text-shadow: 0 0 12px rgba(255, 79, 123, 0.45);
+        }
+        .frame-tag {
+            border-color: rgba(255, 79, 123, 0.5);
+            color: var(--accent);
+        }
     }
 
     &.Tutorial-assignments {
-        @include frame-recolor(#9370db, rgba(138, 43, 226, 0.45), rgba(138, 43, 226, 0.5), rgba(147, 112, 219, 0.35));
+        .frame-inner { border-color: #9370db; }
+        &::before { border-color: rgba(138, 43, 226, 0.5); }
+        &::after { border-color: rgba(147, 112, 219, 0.35); }
+        .frame-index, .frame-title {
+            color: #9370db;
+            text-shadow: 0 0 12px rgba(138, 43, 226, 0.45);
+        }
+        .frame-tag {
+            border-color: rgba(138, 43, 226, 0.5);
+            color: #9370db;
+        }
     }
 
     @media (max-width: 720px) {
@@ -205,13 +199,12 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.3s ease;
     z-index: -1;
     pointer-events: none;
     border: 1px solid var(--glow);
     box-shadow: 0 0 15px var(--glow-soft);
-    
-    filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(250%) contrast(120%) brightness(1.1);
+    filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(250%);
     mix-blend-mode: hard-light;
 
     .post-frame:hover & {

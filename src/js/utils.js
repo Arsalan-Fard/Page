@@ -28,33 +28,3 @@ export function typeWriter(text, element, speed = 50, callback) {
     }
     type();
 }
-
-export function triggerGlitch() {
-    if (typeof PowerGlitch !== 'undefined') {
-        const { startGlitch, stopGlitch } = PowerGlitch.glitch(document.body, {
-            playMode: 'manual',
-            createContainers: false, 
-            hideOverflow: true,
-            timing: {
-                duration: 500,
-                iterations: 1
-            },
-            glitchTimeDivisor: 1,
-            shake: {
-                velocity: 20,
-                amplitude: 0.1,
-            },
-            slice: {
-                count: 15,
-                velocity: 20,
-                minHeight: 0.02,
-                maxHeight: 0.15,
-                hueRotate: true,
-            },
-            pulse: false
-        });
-
-        startGlitch();
-        setTimeout(stopGlitch, 600);
-    }
-}

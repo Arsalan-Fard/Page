@@ -10,23 +10,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    opacity: 1;
-    transform: translateY(0);
+    transition: opacity 0.3s ease;
 
     &.hidden {
         opacity: 0;
         pointer-events: none;
-        transform: translateY(20px);
     }
 
     scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-        width: 0;
-        height: 0;
-    }
+    &::-webkit-scrollbar { display: none; }
 }
 
 .blog-content {
@@ -56,7 +48,6 @@
     cursor: none;
     z-index: 51;
     transition: all 0.3s ease;
-    pointer-events: auto;
 
     &:hover {
         background: var(--glow-soft);
@@ -81,21 +72,6 @@
     padding-bottom: 15px;
 }
 
-.blog-featured-image {
-    width: 100%;
-    height: auto;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 30px;
-    border: 1px solid var(--frame-border);
-    display: block;
-
-    &[src=""] {
-        display: none;
-    }
-}
-
 #blog-body {
     font-size: 1.1rem;
     line-height: 1.8;
@@ -112,14 +88,8 @@
         border: 1px solid var(--frame-border);
         border-radius: 4px;
         overflow-x: auto;
-        max-width: 100%;
-        -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-    pre::-webkit-scrollbar {
-        height: 0;
+        &::-webkit-scrollbar { display: none; }
     }
 
     pre code {
@@ -183,9 +153,8 @@
     color: var(--glow);
     font-family: $font-display;
     font-size: 1.2rem;
-    letter-spacing: 0.05em;
     cursor: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
         transform: translateY(-50%) scale(1.05);

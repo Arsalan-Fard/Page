@@ -5,8 +5,3 @@ Running locally:
 - npm run dev
 
 
-
-- [ ] Color for signs
-- [ ] Glitch for entering
-- [ ] nav bar (scroll bar)
-- [ ]

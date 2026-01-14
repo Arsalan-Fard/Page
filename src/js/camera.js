@@ -26,7 +26,8 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 let isIntroActive = !prefersReducedMotion;
 let introRevealStart = 0;
 let introRevealDurationMs = 1100;
-let introLock = null;
+let savedHtmlOverflow = '';
+let savedBodyOverflow = '';
 let hasTypedScrollHint = false;
 
 function startScrollHintTypewriter() {
@@ -50,16 +51,9 @@ function updateFrameVisibility(depth) {
     frames.forEach((frame) => {
         const z = parseFloat(frame.dataset.z);
         const distance = Math.abs(z + depth);
-        
-        let fadeDist = 2800;
-        // if (frame.classList.contains('lab-assignments') || frame.classList.contains('Tutorial-assignments')) {
-        //     fadeDist = 3200;
-        // }
-
-        const fade = 1 - distance / fadeDist;
+        const fade = 1 - distance / 2800;
         const opacity = clamp(fade, 0.15, 1);
         frame.style.opacity = opacity.toFixed(2);
-        // frame.style.filter = `blur(${clamp((1 - opacity) * 3.5, 0, 2)}px)`;
     });
 }
 
@@ -86,12 +80,9 @@ function onPointerMove(event) {
     tiltY = nx * 6;
     tiltX = -ny * 4;
 
-    if (cursorDot) {
-        cursorDot.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
-    }
-    if (cursorRing) {
-        cursorRing.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
-    }
+    const cursorTransform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
+    if (cursorDot) cursorDot.style.transform = cursorTransform;
+    if (cursorRing) cursorRing.style.transform = cursorTransform;
 }
 
 function finishIntro(immediate = false) {
@@ -105,20 +96,12 @@ function finishIntro(immediate = false) {
         body.classList.remove('intro-revealing');
     }
 
-    if (introLock) {
-        html.style.overflow = introLock.htmlOverflow;
-        if (body) body.style.overflow = introLock.bodyOverflow;
-        introLock = null;
-    } else {
-        html.style.overflow = '';
-        if (body) body.style.overflow = '';
-    }
+    html.style.overflow = savedHtmlOverflow;
+    if (body) body.style.overflow = savedBodyOverflow;
 
-    if (immediate) {
-        if (hero) {
-            hero.style.opacity = '1';
-            hero.style.transform = 'translate3d(0, 0, 0)';
-        }
+    if (immediate && hero) {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translate3d(0, 0, 0)';
     }
 
     onScroll();
@@ -126,9 +109,7 @@ function finishIntro(immediate = false) {
 
 function startIntro() {
     if (!isIntroActive) {
-        if (document.body) {
-            document.body.classList.remove('intro-preload');
-        }
+        if (document.body) document.body.classList.remove('intro-preload');
         return;
     }
 
@@ -136,10 +117,8 @@ function startIntro() {
     const body = document.body;
     if (!body) return;
 
-    introLock = {
-        htmlOverflow: html.style.overflow,
-        bodyOverflow: body.style.overflow
-    };
+    savedHtmlOverflow = html.style.overflow;
+    savedBodyOverflow = body.style.overflow;
 
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
@@ -152,12 +131,8 @@ function startIntro() {
         hero.style.opacity = '0';
         hero.style.transform = 'translate3d(0, 0, 0)';
     }
-    if (scrollHint) {
-        scrollHint.style.opacity = '0';
-    }
-    if (normalModeLink) {
-        normalModeLink.style.opacity = '0';
-    }
+    if (scrollHint) scrollHint.style.opacity = '0';
+    if (normalModeLink) normalModeLink.style.opacity = '0';
 
     introRevealStart = performance.now() + 180;
     body.classList.add('intro-revealing');
@@ -181,11 +156,8 @@ export function initCamera() {
     document.addEventListener("mousedown", () => document.body.classList.add("clicking"));
     document.addEventListener("mouseup", () => document.body.classList.remove("clicking"));
     document.addEventListener("mouseover", (e) => {
-        if (e.target.closest("a, button, .post-frame, input, select, textarea")) {
-            document.body.classList.add("hovering");
-        } else {
-            document.body.classList.remove("hovering");
-        }
+        const isHoverable = e.target.closest("a, button, .post-frame, input, select, textarea");
+        document.body.classList.toggle("hovering", isHoverable);
     });
 
     // Animation Loop
@@ -199,47 +171,29 @@ export function initCamera() {
         updateFrameVisibility(currentZ);
 
         if (isIntroActive) {
-            const now = performance.now();
-            const t = clamp((now - introRevealStart) / introRevealDurationMs, 0, 1);
+            const t = clamp((performance.now() - introRevealStart) / introRevealDurationMs, 0, 1);
             const eased = easeOutCubic(t);
 
-            if (hero) {
-                hero.style.opacity = eased.toFixed(2);
-                hero.style.transform = 'translate3d(0, 0, 0)';
-            }
-            if (scrollHint) {
-                scrollHint.style.opacity = clamp(eased * 0.9, 0, 0.9).toFixed(2);
-            }
-            if (normalModeLink) {
-                normalModeLink.style.opacity = clamp(eased * 0.9, 0, 0.9).toFixed(2);
-            }
-            if (introDim) {
-                introDim.style.opacity = clamp(0.25 * (1 - eased), 0, 0.25).toFixed(2);
-            }
+            if (hero) hero.style.opacity = eased.toFixed(2);
+            if (scrollHint) scrollHint.style.opacity = clamp(eased * 0.9, 0, 0.9).toFixed(2);
+            if (normalModeLink) normalModeLink.style.opacity = clamp(eased * 0.9, 0, 0.9).toFixed(2);
+            if (introDim) introDim.style.opacity = clamp(0.25 * (1 - eased), 0, 0.25).toFixed(2);
 
-            if (t >= 1) {
-                finishIntro(false);
-            }
+            if (t >= 1) finishIntro(false);
             requestAnimationFrame(animate);
             return;
         }
 
         const introProgress = clamp((currentZ + introDepth) / introDepth, 0, 1);
         const heroOpacity = clamp(1 - introProgress * 2, 0, 1);
+
         if (hero) {
             hero.style.opacity = heroOpacity.toFixed(2);
             hero.style.transform = `translate3d(0, ${introProgress * -50}px, 0)`;
         }
-        if (scrollHint) {
-            scrollHint.style.opacity = clamp(heroOpacity * 0.9, 0, 0.9).toFixed(2);
-        }
-        if (normalModeLink) {
-            normalModeLink.style.opacity = clamp(heroOpacity * 0.9, 0, 0.9).toFixed(2);
-        }
-        if (introDim) {
-            const dimOpacity = clamp(0.55 * (1 - introProgress), 0, 0.55);
-            introDim.style.opacity = dimOpacity.toFixed(2);
-        }
+        if (scrollHint) scrollHint.style.opacity = clamp(heroOpacity * 0.9, 0, 0.9).toFixed(2);
+        if (normalModeLink) normalModeLink.style.opacity = clamp(heroOpacity * 0.9, 0, 0.9).toFixed(2);
+        if (introDim) introDim.style.opacity = clamp(0.55 * (1 - introProgress), 0, 0.55).toFixed(2);
         
         requestAnimationFrame(animate);
     }
