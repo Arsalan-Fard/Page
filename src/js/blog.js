@@ -15,6 +15,7 @@ const blogTitle = document.getElementById('blog-title');
 const blogMeta = document.getElementById('blog-meta');
 const blogBody = document.getElementById('blog-body');
 const viewport = document.getElementById('viewport');
+const tableOfContents = document.getElementById('table-of-contents');
 
 export function initBlog() {
     window.addEventListener('hashchange', handleHashChange);
@@ -37,6 +38,7 @@ function handleHashChange() {
         viewport.style.opacity = '1';
         document.body.style.overflow = '';
         blogContent.classList.remove('is-slideshow');
+        tableOfContents.classList.add('hidden');
         if (lastScrollY > 0) {
             window.scrollTo(0, lastScrollY);
         }
@@ -54,6 +56,7 @@ function handleHashChange() {
 
     if (post.slides && allSlides.length > 0) {
         blogContent.classList.add('is-slideshow');
+        tableOfContents.classList.add('hidden');
         showSlideshow(allSlides, post.title);
         return;
     }
@@ -63,10 +66,13 @@ function handleHashChange() {
 
     if (mdContent) {
         blogBody.innerHTML = marked.parse(mdContent);
+        generateTableOfContents();
     } else if (post.body.length < 50 || post.body === '...' || post.body === '--') {
         blogBody.innerHTML = '<p>No content available yet.</p>';
+        tableOfContents.classList.add('hidden');
     } else {
         blogBody.textContent = post.body;
+        tableOfContents.classList.add('hidden');
     }
 }
 
@@ -100,4 +106,34 @@ function showSlideshow(slideUrls, title) {
 
     prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
     nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+}
+
+function generateTableOfContents() {
+    const headers = blogBody.querySelectorAll('h1, h2, h3');
+
+    if (headers.length === 0) {
+        tableOfContents.classList.add('hidden');
+        return;
+    }
+
+    tableOfContents.innerHTML = '';
+    tableOfContents.classList.remove('hidden');
+
+    headers.forEach((header, index) => {
+        const id = `header-${index}`;
+        header.id = id;
+
+        const link = document.createElement('a');
+        link.href = `#${id}`;
+        link.className = `toc-item ${header.tagName.toLowerCase()}`;
+        link.textContent = header.textContent;
+
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const headerTop = header.offsetTop;
+            blogView.scrollTo({ top: headerTop - 100, behavior: 'smooth' });
+        });
+
+        tableOfContents.appendChild(link);
+    });
 }
